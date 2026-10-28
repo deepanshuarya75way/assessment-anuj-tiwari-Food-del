@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
 export const connectDB = async () => {
-    await mongoose.connect('mongodb+srv://greatstack:33858627@cluster0.td6nnmp.mongodb.net/food-del').then(()=>console.log("DB connected"));
+    const uri = process.env.MONGO_URI;
+
+    await mongoose.connect(uri).then(()=>console.log("DB connected"));
 }

@@ -7,7 +7,7 @@ export const StoreContext = createContext(null)
 const StoreContextProvider = (props) => {
 
     const [cartItems, setCartItems] = useState({});
-    const url = "https://food-del-backend-r9ek.onrender.com"
+    const url = "http://localhost:4000";
     const [token, setToken] = useState("");
     const [food_list, setFoodList] = useState([])
 
@@ -35,7 +35,10 @@ const StoreContextProvider = (props) => {
         for(const item in cartItems){
             if(cartItems[item]>0){
                 let itemInfo = food_list.find((product)=>product._id === item);
-                totalAmount += itemInfo.price*cartItems[item];
+    
+                if(itemInfo){
+                    totalAmount += itemInfo.price*cartItems[item];
+                }
             }
         }
         return totalAmount;
@@ -51,6 +54,13 @@ const StoreContextProvider = (props) => {
         setCartItems(response.data.cartData);
     }
 
+    const mergeCart = async(token) => {
+        const response = await axios.post(url+"/api/cart/merge", {guestCart: cartItems}, {headers: {token}});
+        if(response.data.success){
+            setCartItems(response.data.cartData);
+
+        }
+    }
     useEffect(()=>{
         
         async function loadData(){
@@ -73,7 +83,8 @@ const StoreContextProvider = (props) => {
         getTotalCartAmount,
         url,
         token,
-        setToken
+        setToken,
+        mergeCart
     }
     return (
         <StoreContext.Provider value={contextValue}>
